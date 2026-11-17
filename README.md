@@ -27,10 +27,12 @@ npm install
 
 ### 2. Configure Environment Variables (`.env`)
 ```ini
-VITE_SUPABASE_URL=https://ssmlgxdpddcuvoqbzcdj.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_Eq2QL4P6r6b1k-1Xm9JQ9g_AKRGox_l
-VITE_GROQ_API_KEY=gsk_...
-TAVILY_API_KEY=tvly-...
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_GROQ_API_KEY=your_groq_api_key
+TAVILY_API_KEY=your_tavily_api_key
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_PROJECT=signalstackintern
 ```
 
 ### 3. Run Development Server
@@ -64,6 +66,5 @@ npm run build
 - **[Database Architecture](docs/DATABASE.md)**: 43-table data dictionary, ERD, and RLS policies.
 - **[API Documentation](docs/API_DOCUMENTATION.md)**: Complete Hono RESTful route guide.
 - **[Free-Tier Limits & Cost](docs/COST_AND_LIMITS.md)**: Quotas and unit economics.
-- **[Video Demo Script](docs/DEMO_SCRIPT.md)**: 5-minute recorded presentation script.
 - **[Requirements Traceability](docs/REQUIREMENTS_TRACEABILITY.md)**: Full requirements matrix.
 - **[Engineering Audit Report](docs/INDEPENDENT_ENGINEERING_AUDIT.md)**: Independent Principal Engineering evaluation.

@@ -31,7 +31,7 @@ export class LangSmithTracer {
     } catch {
       // ignore
     }
-    this.apiKey = key || "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";
+    this.apiKey = key || "";
     this.projectName = projectName;
   }
 

@@ -3,7 +3,7 @@ import { langsmith } from "./langsmith.js";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY =
-  (import.meta.env["VITE_GROQ_API_KEY"] as string | undefined) || "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";
+  (import.meta.env["VITE_GROQ_API_KEY"] as string | undefined) || "";
 
 export const GROQ_MODELS = {
   flagship: "openai/gpt-oss-120b",

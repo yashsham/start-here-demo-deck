@@ -12,7 +12,7 @@ export interface AIConfig {
 }
 
 export function loadAIConfig(env: Record<string, string | undefined> = process.env): AIConfig {
-  const groqApiKey = env.GROQ_API_KEY || env.VITE_GROQ_API_KEY || "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";
+  const groqApiKey = env.GROQ_API_KEY || env.VITE_GROQ_API_KEY || "";
   const cloudflareAccountId = env.CLOUDFLARE_ACCOUNT_ID;
   const aiGatewayId = env.AI_GATEWAY_ID;
 
