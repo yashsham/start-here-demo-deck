@@ -1,5 +1,5 @@
 import type { ResearchDossier, BriefContent, PreviewSignal } from "../components/signal-stack/data";
-import { langsmith } from "./langsmith.js";
+import { langsmith } from "./langsmith";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY =

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 import type { User, Session, AuthError } from "@supabase/supabase-js";
-import { supabase, isSupabaseConfigured } from "./supabase.js";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 export interface UserProfileData {
   id: string;
