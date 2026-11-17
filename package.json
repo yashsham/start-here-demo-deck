@@ -14,9 +14,6 @@
     "test:watch": "vitest",
     "deploy": "wrangler deploy --name signalstack"
   },
-  "overrides": {
-    "rolldown": "1.2.1"
-  },
   "dependencies": {
     "@hono/zod-validator": "^0.9.1",
     "@hookform/resolvers": "^5.2.2",
