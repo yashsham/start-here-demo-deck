@@ -1,0 +1,61 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "signal-stack-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "queues": {
+    "producers": [
+      {
+        "binding": "INTELLIGENCE_QUEUE",
+        "queue": "signal-stack-intelligence-queue"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "signal-stack-intelligence-queue",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30,
+        "max_retries": 3,
+        "dead_letter_queue": "signal-stack-dlq"
+      }
+    ]
+  },
+  "triggers": {
+    "crons": ["0 */4 * * *", "0 6 * * 1"]
+  },
+  "env": {
+    "staging": {
+      "name": "signal-stack-api-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      },
+      "queues": {
+        "producers": [
+          {
+            "binding": "INTELLIGENCE_QUEUE",
+            "queue": "signal-stack-intelligence-staging-queue"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "signal-stack-intelligence-staging-queue",
+            "max_batch_size": 5,
+            "max_batch_timeout": 30,
+            "max_retries": 3,
+            "dead_letter_queue": "signal-stack-staging-dlq"
+          }
+        ]
+      }
+    },
+    "production": {
+      "name": "signal-stack-api-production",
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
+}

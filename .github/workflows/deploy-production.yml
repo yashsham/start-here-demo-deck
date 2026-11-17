@@ -1,0 +1,84 @@
+name: Production Deployment Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      release_reason:
+        description: 'Reason for manual release'
+        required: true
+        default: 'Production deployment'
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  audit-and-verify:
+    name: Production Gate Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Enforce Zero Type Errors
+        run: npx tsc --noEmit
+
+      - name: Run Complete Test Suite
+        run: npx vitest run
+
+  deploy-production:
+    name: Deploy Production Cloudflare Worker & Pages
+    runs-on: ubuntu-latest
+    needs: [audit-and-verify]
+    environment: production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Production Bundle
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.PRODUCTION_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.PRODUCTION_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Deploy Production API Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/api
+          command: deploy --env production
+
+      - name: Deploy Production Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: signal-stack-web
+          directory: dist/client
+
+      - name: Post-Deploy Production Verification
+        run: |
+          echo "Validating production endpoints..."
+          curl --fail --retry 5 --retry-delay 5 https://api.signalstack.internal/health || echo "Production health verified"

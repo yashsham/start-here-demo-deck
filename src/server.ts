@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import apiApp from "../apps/api/src/index.js";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -44,12 +45,26 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-// Hosting compresses every response at the edge. Never compress a body (gzip, brotli,
 // CompressionStream) or set content-encoding here or in a server route: the body gets encoded
 // twice and renders garbled.
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      if (
+        url.pathname === "/health" ||
+        url.pathname === "/ready" ||
+        url.pathname.startsWith("/operations") ||
+        url.pathname.startsWith("/auth") ||
+        url.pathname.startsWith("/companies") ||
+        url.pathname.startsWith("/signals") ||
+        url.pathname.startsWith("/sources") ||
+        url.pathname.startsWith("/briefs") ||
+        url.pathname.startsWith("/interviews")
+      ) {
+        return apiApp.fetch(request, env as any, ctx as any);
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
