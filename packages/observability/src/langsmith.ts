@@ -16,7 +16,22 @@ export class LangSmithTracer {
   private endpoint = "https://api.smith.langchain.com/runs";
 
   constructor(apiKey?: string, projectName = "signalstackintern") {
-    this.apiKey = apiKey || process.env.LANGSMITH_API_KEY || "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";
+    let key = apiKey;
+    try {
+      if (!key && typeof process !== "undefined" && process?.env?.["LANGSMITH_API_KEY"]) {
+        key = process.env["LANGSMITH_API_KEY"];
+      }
+    } catch {
+      // ignore
+    }
+    try {
+      if (!key && typeof import.meta !== "undefined" && (import.meta as any)?.env?.["VITE_LANGSMITH_API_KEY"]) {
+        key = (import.meta as any).env["VITE_LANGSMITH_API_KEY"];
+      }
+    } catch {
+      // ignore
+    }
+    this.apiKey = key || "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";
     this.projectName = projectName;
   }
 
@@ -28,12 +43,13 @@ export class LangSmithTracer {
       id: runId,
       name: run.name,
       run_type: run.run_type,
-      start_time: run.start_time || Date.now(),
-      end_time: run.end_time || Date.now(),
+      start_time: typeof run.start_time === "number" ? new Date(run.start_time).toISOString() : new Date().toISOString(),
+      end_time: typeof run.end_time === "number" ? new Date(run.end_time).toISOString() : new Date().toISOString(),
       inputs: run.inputs,
       outputs: run.outputs,
       error: run.error,
       session_name: this.projectName,
+      session_id: "894a2737-b351-440d-965b-164b40055e77",
       extra: {
         project_name: this.projectName,
         ...run.extra,

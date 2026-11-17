@@ -6,10 +6,10 @@ export interface UserProfileData {
   id: string;
   email: string;
   fullName: string;
-  organizationName?: string;
-  avatarUrl?: string;
-  role?: string;
-  isDemo?: boolean;
+  organizationName?: string | undefined;
+  avatarUrl?: string | undefined;
+  role?: string | undefined;
+  isDemo?: boolean | undefined;
 }
 
 export interface AuthContextType {
@@ -34,6 +34,11 @@ export interface AuthContextType {
     organizationName?: string
   ) => void;
   signOut: () => Promise<void>;
+  updateProfile: (updates: {
+    fullName?: string | undefined;
+    organizationName?: string | undefined;
+    avatarUrl?: string | undefined;
+  }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -342,6 +347,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const updateProfile = useCallback(
+    async (updates: {
+      fullName?: string | undefined;
+      organizationName?: string | undefined;
+      avatarUrl?: string | undefined;
+    }) => {
+      try {
+        if (!profile && !user) {
+          return { success: false, error: "No authenticated user session" };
+        }
+
+        const updatedProfile: UserProfileData = {
+          id: profile?.id || user?.id || "user",
+          email: profile?.email || user?.email || "",
+          fullName: updates.fullName !== undefined ? updates.fullName : (profile?.fullName || "Analyst"),
+          organizationName:
+            updates.organizationName !== undefined
+              ? updates.organizationName
+              : (profile?.organizationName || "Signal Stack Organization"),
+          avatarUrl: updates.avatarUrl !== undefined ? updates.avatarUrl : profile?.avatarUrl,
+          role: profile?.role || "owner",
+          isDemo: profile?.isDemo ?? isDemoUser,
+        };
+
+        setProfile(updatedProfile);
+
+        // Persist demo profile locally
+        if (updatedProfile.isDemo && typeof window !== "undefined") {
+          try {
+            localStorage.setItem(DEMO_USER_STORAGE_KEY, JSON.stringify(updatedProfile));
+          } catch {
+            // ignore
+          }
+        }
+
+        // Persist Supabase profile in auth metadata and database
+        if (isSupabaseConfigured && user) {
+          try {
+            await supabase.auth.updateUser({
+              data: {
+                full_name: updatedProfile.fullName,
+                organization_name: updatedProfile.organizationName,
+                avatar_url: updatedProfile.avatarUrl,
+              },
+            });
+
+            await supabase.from("user_profiles").upsert(
+              {
+                id: user.id,
+                full_name: updatedProfile.fullName,
+                avatar_url: updatedProfile.avatarUrl,
+                email: user.email || updatedProfile.email,
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "id" }
+            );
+          } catch (supaErr) {
+            console.warn("Supabase profile sync notice:", supaErr);
+          }
+        }
+
+        return { success: true };
+      } catch (err: any) {
+        return { success: false, error: err?.message || "Failed to update profile" };
+      }
+    },
+    [profile, user, isDemoUser]
+  );
+
   const contextValue = useMemo(
     () => ({
       user,
@@ -354,6 +428,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithGoogle,
       signInAsDemoUser,
       signOut,
+      updateProfile,
     }),
     [
       user,
@@ -366,6 +441,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithGoogle,
       signInAsDemoUser,
       signOut,
+      updateProfile,
     ]
   );
 

@@ -27,6 +27,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/lib/auth-context";
 import type { CompanyName } from "../data";
 
 interface ProfilePillar {
@@ -40,6 +41,7 @@ interface ProfilePillar {
 }
 
 export function ProfileScreen({ company }: { company: CompanyName }) {
+  const { profile } = useAuth();
   const [versionHistoryOpen, setVersionHistoryOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedPillar, setSelectedPillar] = useState<ProfilePillar | null>(null);
@@ -149,7 +151,7 @@ export function ProfileScreen({ company }: { company: CompanyName }) {
     {
       version: "v1.2 (Active)",
       date: "Nov 16, 2026 · 14:20 IST",
-      author: "Alex Kim",
+      author: profile?.fullName || "Operator",
       change: "Added Customer Problems & CBSE Experiential Mandates alignment.",
     },
     {

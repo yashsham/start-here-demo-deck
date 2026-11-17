@@ -212,16 +212,33 @@ export function AppHeader({
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="grid size-8 shrink-0 place-items-center rounded-full bg-brand-soft text-[10px] font-bold text-brand ring-1 ring-border cursor-pointer hover:ring-brand/50 transition-all"
+                className="grid size-8 shrink-0 place-items-center rounded-full bg-brand-soft text-[10px] font-bold text-brand ring-1 ring-border cursor-pointer hover:ring-brand/50 transition-all overflow-hidden"
                 aria-label="User profile menu"
               >
-                {initials}
+                {profile.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={profile.fullName || "User"}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  initials
+                )}
               </button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-[260px] p-4 shadow-xl space-y-3">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground truncate">{profile.fullName}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    {profile.avatarUrl && (
+                      <img
+                        src={profile.avatarUrl}
+                        alt="Avatar"
+                        className="size-6 rounded-full object-cover shrink-0 ring-1 ring-border"
+                      />
+                    )}
+                    <span className="font-bold text-xs text-foreground truncate">{profile.fullName}</span>
+                  </div>
                   <Badge
                     variant="outline"
                     className={`text-[9px] ${

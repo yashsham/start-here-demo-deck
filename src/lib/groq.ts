@@ -1,4 +1,5 @@
 import type { ResearchDossier, BriefContent, PreviewSignal } from "../components/signal-stack/data";
+import { langsmith } from "./langsmith.js";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_API_KEY =
@@ -19,6 +20,7 @@ interface CallGroqOptions {
   model?: string;
   temperature?: number;
   jsonMode?: boolean;
+  traceName?: string;
 }
 
 export async function callGroqChat({
@@ -26,29 +28,65 @@ export async function callGroqChat({
   model = GROQ_MODELS.flagship,
   temperature = 0.2,
   jsonMode = false,
+  traceName = "GroqChatInference",
 }: CallGroqOptions): Promise<string> {
-  const response = await fetch(GROQ_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${GROQ_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature,
-      response_format: jsonMode ? { type: "json_object" } : undefined,
-    }),
-  });
+  const startTime = Date.now();
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Groq API Error (${response.status}): ${errorText}`);
+  try {
+    const response = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature,
+        response_format: jsonMode ? { type: "json_object" } : undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      void langsmith.traceRun({
+        name: traceName,
+        run_type: "llm",
+        start_time: startTime,
+        end_time: Date.now(),
+        inputs: { model, messages, temperature, jsonMode },
+        error: `HTTP ${response.status}: ${errorText}`,
+      });
+      throw new Error(`Groq API Error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content ?? "";
+
+    void langsmith.traceRun({
+      name: traceName,
+      run_type: "llm",
+      start_time: startTime,
+      end_time: Date.now(),
+      inputs: { model, messages, temperature, jsonMode },
+      outputs: { content, usage: data.usage },
+      extra: { model, finish_reason: data.choices?.[0]?.finish_reason },
+    });
+
+    return content;
+  } catch (err: any) {
+    if (!err.message?.startsWith("Groq API Error")) {
+      void langsmith.traceRun({
+        name: traceName,
+        run_type: "llm",
+        start_time: startTime,
+        end_time: Date.now(),
+        inputs: { model, messages, temperature, jsonMode },
+        error: err.message || "Unknown error during Groq invocation",
+      });
+    }
+    throw err;
   }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content ?? "";
-  return content;
 }
 
 /**
@@ -97,6 +135,7 @@ Include exactly 3-4 products, 3 business model streams, 3 customer segments, 3 p
     ],
     model: GROQ_MODELS.flagship,
     jsonMode: true,
+    traceName: `CompanyResearchDossierAgent[${companyName}]`,
   });
 
   return JSON.parse(content) as ResearchDossier;
@@ -145,6 +184,7 @@ Return ONLY a valid JSON object with a "pillars" array of exactly 8 items matchi
     ],
     model: GROQ_MODELS.flagship,
     jsonMode: true,
+    traceName: `DynamicInterviewCalibrationAgent[${companyName}]`,
   });
 
   const parsed = JSON.parse(content);
@@ -199,6 +239,7 @@ Only include "actionItems" on "Recommended Actions for This Week" and "watchList
     ],
     model: GROQ_MODELS.flagship,
     jsonMode: true,
+    traceName: `MondayMorningBriefSynthesisEngine[${companyName}]`,
   });
 
   const parsed = JSON.parse(content);
@@ -244,6 +285,7 @@ Return a valid JSON object with:
     ],
     model: GROQ_MODELS.fast,
     jsonMode: true,
+    traceName: "SignalClassifierInference",
   });
 
   return JSON.parse(content);
