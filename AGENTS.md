@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project architecture
+- Keep the Signal Stack workspace in a shared, reusable shell with file-based TanStack routes and isolated preview fixtures, so later services can replace sample data without rewriting page composition.
