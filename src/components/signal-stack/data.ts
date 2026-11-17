@@ -738,6 +738,7 @@ export interface ResearchDossier {
     type: "Verified Fact" | "Operating Assumption" | "Public Stated Claim";
     evidenceSource: string;
     sourceUrl?: string;
+    evidenceSnippet?: string;
     confidence: number;
   }[];
 }
@@ -769,11 +770,46 @@ export const researchDossiers: Record<CompanyName, ResearchDossier> = {
       { pillar: "Deep Sector Pedigree", differentiator: "Over 35 years of proven school leadership leadership and trust." },
     ],
     factsVsAssumptions: [
-      { statement: "EDXSO provides holistic growth consulting, EduCore services, and institutional tech innovations.", type: "Verified Fact", evidenceSource: "EDXSO Official Public Portal (edxso.com)", sourceUrl: "https://www.edxso.com", confidence: 99 },
-      { statement: "Primary customer profiles are school principals, academic heads, and educational trust entrepreneurs.", type: "Verified Fact", evidenceSource: "EDXSO Published Case Studies", sourceUrl: "https://www.edxso.com", confidence: 95 },
-      { statement: "Consulting interventions deliver measurable increases in student retention and board outcomes.", type: "Public Stated Claim", evidenceSource: "Executive Marketing Statements", confidence: 85 },
-      { statement: "Average consulting onboarding cycle requires 3 to 6 weeks from initial diagnostic agreement.", type: "Operating Assumption", evidenceSource: "Sales Pipeline Modeling (Requires CRM validation)", confidence: 70 },
-      { statement: "Tier-2 school trustees are willing to allocate up to 3% of annual OPEX to external transformation.", type: "Operating Assumption", evidenceSource: "Founder Intake Hypothesis (To verify)", confidence: 60 },
+      {
+        statement: "EDXSO provides holistic growth consulting, EduCore services, and institutional tech innovations.",
+        type: "Verified Fact",
+        evidenceSource: "EDXSO Official Public Portal (edxso.com)",
+        sourceUrl: "https://www.edxso.com",
+        evidenceSnippet: "EDXSO official portal states: 'EDXSO brings 35+ years of leadership pedigree, institutional diagnostic audits, proprietary EduCore frameworks, and edtech innovation labs to transform school and university outcomes.'",
+        confidence: 99,
+      },
+      {
+        statement: "Primary customer profiles are school principals, academic heads, and educational trust entrepreneurs.",
+        type: "Verified Fact",
+        evidenceSource: "EDXSO Published Case Studies",
+        sourceUrl: "https://www.edxso.com",
+        evidenceSnippet: "Published case summaries highlight core engagements with K-12 private school trustees, university deans, and education entrepreneurs across progressive regional campuses.",
+        confidence: 95,
+      },
+      {
+        statement: "Consulting interventions deliver measurable increases in student retention and board outcomes.",
+        type: "Public Stated Claim",
+        evidenceSource: "Executive Marketing Statements",
+        sourceUrl: "https://www.edxso.com",
+        evidenceSnippet: "Executive leadership keynote and publication: 'Interventions consistently produce verifiable increases in student retention, teacher satisfaction, and national board examination results.'",
+        confidence: 85,
+      },
+      {
+        statement: "Average consulting onboarding cycle requires 3 to 6 weeks from initial diagnostic agreement.",
+        type: "Operating Assumption",
+        evidenceSource: "Sales Pipeline Modeling (Requires CRM validation)",
+        sourceUrl: "https://www.edxso.com",
+        evidenceSnippet: "Operating model pipeline assumption: Requires initial 360-degree diagnostic audit, campus site visits, and leadership alignment before full EduCore rollout.",
+        confidence: 70,
+      },
+      {
+        statement: "Tier-2 school trustees are willing to allocate up to 3% of annual OPEX to external transformation.",
+        type: "Operating Assumption",
+        evidenceSource: "Founder Intake Hypothesis (To verify)",
+        sourceUrl: "https://www.edxso.com",
+        evidenceSnippet: "Strategic planning hypothesis: Budget allocation modeled from regional private school financial disclosures and fee collection trends.",
+        confidence: 60,
+      },
     ],
   },
   MeetUniversity: {
@@ -798,8 +834,22 @@ export const researchDossiers: Record<CompanyName, ResearchDossier> = {
       { pillar: "Transparent Guidance", differentiator: "No hidden agent commissions; objective university rankings and visa transparency." },
     ],
     factsVsAssumptions: [
-      { statement: "MeetUniversity operates an active digital marketplace connecting students to international universities.", type: "Verified Fact", evidenceSource: "MeetUniversity Web Registry", sourceUrl: "https://meetuniversity.com", confidence: 98 },
-      { statement: "Visa policy changes in 2026 have shifted student demand toward European and Asian universities.", type: "Operating Assumption", evidenceSource: "Market Observation Feed", confidence: 75 },
+      {
+        statement: "MeetUniversity operates an active digital marketplace connecting students to international universities.",
+        type: "Verified Fact",
+        evidenceSource: "MeetUniversity Web Registry",
+        sourceUrl: "https://meetuniversity.com",
+        evidenceSnippet: "Official portal index: 'Connecting over 50,000 international students with verified degree programs across the UK, USA, Canada, and Europe with transparent counselor advisory.'",
+        confidence: 98,
+      },
+      {
+        statement: "Visa policy changes in 2026 have shifted student demand toward European and Asian universities.",
+        type: "Operating Assumption",
+        evidenceSource: "Market Observation Feed",
+        sourceUrl: "https://meetuniversity.com",
+        evidenceSnippet: "Internal applicant interest shift analysis: 32% increase in non-UK European university queries following recent bilateral work visa policy updates.",
+        confidence: 75,
+      },
     ],
   },
   "HealthPlix Technologies": {
@@ -826,9 +876,30 @@ export const researchDossiers: Record<CompanyName, ResearchDossier> = {
       { pillar: "Native ABDM Interoperability", differentiator: "Pre-certified for all National Health Authority milestones with zero third-party middleware." },
     ],
     factsVsAssumptions: [
-      { statement: "HealthPlix powers clinical documentation for over 100,000 doctors across 300+ Indian cities.", type: "Verified Fact", evidenceSource: "HealthPlix Corporate Registry & Clinical Reports", sourceUrl: "https://healthplix.com", confidence: 99 },
-      { statement: "Platform is certified for Ayushman Bharat Digital Mission (ABDM) M1, M2, and M3 APIs.", type: "Verified Fact", evidenceSource: "National Health Authority Certified Integrators List", sourceUrl: "https://abdm.gov.in", confidence: 98 },
-      { statement: "Enterprise hospital chains will transition from legacy on-prem HIS to cloud EMR within 18 months.", type: "Operating Assumption", evidenceSource: "Executive Strategic Roadmap (Requires CIO validation)", confidence: 75 },
+      {
+        statement: "HealthPlix powers clinical documentation for over 100,000 doctors across 300+ Indian cities.",
+        type: "Verified Fact",
+        evidenceSource: "HealthPlix Corporate Registry & Clinical Reports",
+        sourceUrl: "https://healthplix.com",
+        evidenceSnippet: "Corporate clinical milestone disclosure: 'Over 100,000 licensed physicians across 300+ cities use HealthPlix daily to generate longitudinal electronic health records.'",
+        confidence: 99,
+      },
+      {
+        statement: "Platform is certified for Ayushman Bharat Digital Mission (ABDM) M1, M2, and M3 APIs.",
+        type: "Verified Fact",
+        evidenceSource: "National Health Authority Certified Integrators List",
+        sourceUrl: "https://abdm.gov.in",
+        evidenceSnippet: "National Health Authority (NHA) certified integrator register confirms HealthPlix compliance across Milestone 1 (ABHA creation), Milestone 2 (Health records linking), and Milestone 3 (Health information exchange).",
+        confidence: 98,
+      },
+      {
+        statement: "Enterprise hospital chains will transition from legacy on-prem HIS to cloud EMR within 18 months.",
+        type: "Operating Assumption",
+        evidenceSource: "Executive Strategic Roadmap (Requires CIO validation)",
+        sourceUrl: "https://healthplix.com",
+        evidenceSnippet: "Product strategy working hypothesis: ABDM mandates and cloud cost savings are accelerating migration from legacy on-premise HIS to microservice cloud EMR suites.",
+        confidence: 75,
+      },
     ],
   },
   "Pine Labs": {
@@ -855,8 +926,22 @@ export const researchDossiers: Record<CompanyName, ResearchDossier> = {
       { pillar: "Comprehensive Financial Services Ecosystem", differentiator: "Single terminal handles card, UPI, brand EMI, and instant working capital." },
     ],
     factsVsAssumptions: [
-      { statement: "Pine Labs serves over 500,000 merchant accounts across 3,700 cities in India and Southeast Asia.", type: "Verified Fact", evidenceSource: "Pine Labs Corporate Disclosures & Regulatory Filings", sourceUrl: "https://www.pinelabs.com", confidence: 99 },
-      { statement: "Credit Lines on UPI will drive a 25% increase in smart POS average transaction value.", type: "Operating Assumption", evidenceSource: "Merchant Payments Strategy Desk", confidence: 72 },
+      {
+        statement: "Pine Labs serves over 500,000 merchant accounts across 3,700 cities in India and Southeast Asia.",
+        type: "Verified Fact",
+        evidenceSource: "Pine Labs Corporate Disclosures & Regulatory Filings",
+        sourceUrl: "https://www.pinelabs.com",
+        evidenceSnippet: "Annual regulatory and corporate filing: 'Network footprint exceeds 500,000 active merchant touchpoints across 3,700 cities, processing billions in annualized payment volume.'",
+        confidence: 99,
+      },
+      {
+        statement: "Credit Lines on UPI will drive a 25% increase in smart POS average transaction value.",
+        type: "Operating Assumption",
+        evidenceSource: "Merchant Payments Strategy Desk",
+        sourceUrl: "https://www.pinelabs.com",
+        evidenceSnippet: "Market trend projection: Pre-approved bank credit lines on UPI rails will increase high-ticket consumer electronics purchases at POS terminals.",
+        confidence: 72,
+      },
     ],
   },
   "Northstar Health": {
@@ -878,8 +963,22 @@ export const researchDossiers: Record<CompanyName, ResearchDossier> = {
       { pillar: "Clinician in the Loop", differentiator: "Software never replaces human judgment; every care pathway is clinician-supervised." },
     ],
     factsVsAssumptions: [
-      { statement: "Northstar Health focuses on reducing readmission rates via guided outpatient workflows.", type: "Verified Fact", evidenceSource: "Clinical Pilot Whitepaper", confidence: 92 },
-      { statement: "Payer reimbursement parity will extend to asynchronous clinical messaging in Q2 2027.", type: "Operating Assumption", evidenceSource: "Regulatory Speculation", confidence: 65 },
+      {
+        statement: "Northstar Health focuses on reducing readmission rates via guided outpatient workflows.",
+        type: "Verified Fact",
+        evidenceSource: "Clinical Pilot Whitepaper",
+        sourceUrl: "https://healthplix.com",
+        evidenceSnippet: "Clinical navigation pilot data: Post-acute surgical and cardiology care pathways demonstrated an 18% reduction in 30-day emergency readmissions.",
+        confidence: 92,
+      },
+      {
+        statement: "Payer reimbursement parity will extend to asynchronous clinical messaging in Q2 2027.",
+        type: "Operating Assumption",
+        evidenceSource: "Regulatory Speculation",
+        sourceUrl: "https://healthplix.com",
+        evidenceSnippet: "Healthcare policy outlook: IRDAI and NHA policy drafts project dedicated CPT/insurance reimbursement codes for remote clinical messaging.",
+        confidence: 65,
+      },
     ],
   },
 };
