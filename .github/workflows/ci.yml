@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install Dependencies
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install Dependencies
@@ -60,14 +60,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Build Application
-        run: npm run build
+        run: |
+          npm run build 2>&1 | tee build.log || {
+            echo "::error title=Build Failure::$(head -n 25 build.log | tr '\n' ' ')"
+            echo "::notice title=Build Error Tail::$(tail -n 30 build.log | tr '\n' ' ')"
+            echo "### Build Log" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat build.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://ssmlgxdpddcuvoqbzcdj.supabase.co' }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_Eq2QL4P6r6b1k-1Xm9JQ9g_AKRGox_l' }}
